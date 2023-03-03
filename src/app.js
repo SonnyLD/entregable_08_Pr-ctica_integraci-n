@@ -8,6 +8,7 @@ import passportLocalRouter from'./routers/passportLocal.router.js';
 import githubRouter from './routers/github.routes.js';
 import dotenv from 'dotenv';
 import "./config/db.js";
+if (process.env.MONGO_URI) import("./config/db.js");
 import cookie from "cookie-parser";
 import session from "express-session";
 import mongoStore from "connect-mongo";

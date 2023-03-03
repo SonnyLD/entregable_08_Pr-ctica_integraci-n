@@ -1,5 +1,5 @@
 import productService from "../services/products.services.js";
-import userServices from "../services/user.services.js";
+import * as userService from "../services/user.service.js";
 
 export async function login(req, res) { 
   try {
@@ -7,7 +7,7 @@ export async function login(req, res) {
       if (!req.session.logged) {
           return res.status(200).render('login');
       }
-      
+        
       return res.status(200).redirect('/products');
 
   } catch (error) {
@@ -28,7 +28,7 @@ export async function getCart(req, res) {
   try {
 
       const userMail = req.session.user.email;
-      const user = await userServices.getUser(userMail);
+      const user = await userService.getUser(userMail);
       delete user.password
 
       if (user) {

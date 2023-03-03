@@ -1,4 +1,4 @@
-import * as JWTService from '../services/jwt.services.js'
+import * as JWTService from '../services/jwt.service.js'
 import { generateToken } from '../utils/jwt.utils.js'
 
 export async function login(req, res) {
@@ -21,7 +21,7 @@ export async function loginCookie(req, res) {
     const user = await JWTService.login(email, password)
     delete user.password
     const token = generateToken(user)
-    res.cookie('coderhouse', token, { maxAge: 100000, httpOnly:true }).send('logged in!')
+    res.cookie('coderhouse', token, { maxAge: 300000, httpOnly:true }).send('logged in!')
   } catch (error) {
     res.status(403).send(error.message)
   }

@@ -24,7 +24,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       minLength: 6,
-      maxLength: 10,
     },
     cart: {
       type: mongoose.Schema.Types.ObjectId, 

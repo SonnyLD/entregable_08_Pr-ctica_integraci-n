@@ -1,57 +1,12 @@
 import passportLocal from 'passport-local';
-import UserService from "../services/user.services.js";
-import authServices from '../services/auth.service.js'
+import * as UserService from "../services/user.service.js";
+import * as authServices from '../services/auth.service.js'
 import passportGithub from 'passport-github2';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
 function passportConfig(passport) {
-  passport.use(
-    'signup',
-    new passportLocal.Strategy(
-      { passReqToCallback: true, usernameField: 'email' },
-      async (req, username, password, done) => {
-        try {
-          const userExist = await UserService.getUser(username);
-
-          if (userExist) {
-            return done(null, false, {
-              message: 'Email is already registered',
-            });
-          }
-
-          const user = await UserService.createUser(req.body);
-
-          return done(null, user);
-        } catch (error) {
-          throw new Error(error.message);
-        }
-      }
-    )
-  );
-
-  passport.use(
-    'login',
-    new passportLocal.Strategy(
-      { passReqToCallback: true, usernameField: 'email' },
-      async (req, username, password, done) => {
-        try {
-          const user = await authServices.login(username, password);
-
-          if (!user) {
-            return done(null, false);
-          }
-
-          return done(null, user);
-        } catch (error) {
-          done(null, false, { message: error.message });
-          //throw new Error(error.message);
-        }
-      }
-    )
-  );
-
   passport.use(
     'github',
     new passportGithub.Strategy(

@@ -1,5 +1,5 @@
 import * as AuthService from "./auth.service.js";
-import * as UserService from "./user.services.js"
+import * as UserService from "./user.service.js"
 
 export async function login(email, password) {
   try {

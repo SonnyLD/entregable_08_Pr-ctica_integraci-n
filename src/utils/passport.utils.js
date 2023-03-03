@@ -1,6 +1,10 @@
 import passport from "passport";
-import {Strategy, ExtractJwt} from 'passport-jwt'
+import {Strategy} from 'passport-local';
+import {ExtractJwt} from "passport-jwt";
 import  UserModel  from '../dao/models/users.models.js'
+import * as userService from "../services/user.service.js";
+import * as authServices from '../services/auth.service.js'
+
 import dotenv from 'dotenv'
 dotenv.config()
 
@@ -50,6 +54,40 @@ passport.use('jwtCookie', new Strategy({
 //   done(null, jwtPayload.user)
 // }))
 
+passport.use(
+  "signup",
+  new Strategy({ passReqToCallback: true, usernameField: "email" }, async function (
+    req,
+    username,
+    password,
+    done,
+  ) {
+    try {
+      const userExist = await UserModel.findOne({ email: username });
+      if (userExist) {
+        return done("El usuario ya existe", false);
+      } else {
+        const user = await userService.createUser(req.body);
+        return done(null, user);
+      }
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }),
+);
 
+passport.use("login", new Strategy({passReqToCallback:true, usernameField:'email'}, async function (req,username,password,done) {
+  try {
+    const login = await authServices.login(username, password)
+    if (login) {
+      const user = await UserModel.findOne({ email: username });
+      return done(null,user)
+    } else {
+      return done(null,false)
+    }
+  } catch (error) {
+    throw new Error(error.message)
+  }
+}))
 
 export default passport;

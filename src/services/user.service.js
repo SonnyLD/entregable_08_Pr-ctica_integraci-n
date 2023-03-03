@@ -1,9 +1,8 @@
 import UserModel from "../dao/models/users.models.js";
-import cartServices from"../services/carts.services.js"
+import cartServices from"./carts.services.js"
 import bcrypt from 'bcrypt'
 
-class UserServices {
-  async createUser(user) {
+export async function createUser(user) {
     try {
       const userExists = await UserModel.findOne({ email: user.email }).lean();
 
@@ -22,7 +21,7 @@ class UserServices {
     }
   }
 
-  async getUser(email) {
+  export async function getUser(email) {
     try {
       const users = await UserModel.findOne({ email }).populate({
         path: 'cart',
@@ -38,7 +37,7 @@ class UserServices {
       throw new Error(error.message)
     }
   }
-  async getUserById(id) {
+  export async function getUserById(id) {
     try {
       const user = await UserModel.findById(id).populate({
         path: 'cart',
@@ -54,7 +53,7 @@ class UserServices {
       throw new Error(error.message)
     }
   }
-}
+
 export async function updateUser(email, data, updatePassword = false) {
   try {
     const user = await getUser(email);
@@ -73,6 +72,3 @@ export async function updateUser(email, data, updatePassword = false) {
     throw new Error(error.message);
   }
 }
-
-const userService = new UserServices();
-export default userService;

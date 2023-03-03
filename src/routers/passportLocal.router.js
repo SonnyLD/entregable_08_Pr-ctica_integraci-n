@@ -1,6 +1,7 @@
 import express from 'express';
-import passport from 'passport';
 import * as passportController from '../controllers/passport.controller.js';
+import passport from '../utils/passport.utils.js'
+
 
 const passportLocalRouter = express.Router();
 
