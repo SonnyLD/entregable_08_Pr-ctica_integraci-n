@@ -63,31 +63,60 @@ passport.use(
     done,
   ) {
     try {
+      console.log("req.body:", req.body);
       const userExist = await UserModel.findOne({ email: username });
+      console.log("userExist:", userExist);
+
       if (userExist) {
+        console.log("User already exists");
         return done("El usuario ya existe", false);
+
       } else {
-        const user = await userService.createUser(req.body);
+        const userData = {
+          first_name: req.body.firstName,
+          last_name: req.body.lastName,
+          email: req.body.email,
+          password: req.body.password,
+          age: req.body.age,
+        };
+        console.log("userData:", userData);
+        const user = await userService.createUser(userData);
+
+        console.log("User created:", user);
         return done(null, user);
       }
     } catch (error) {
+      console.error("Error creating user:", error.message);
       throw new Error(error.message);
     }
   }),
 );
 
-passport.use("login", new Strategy({passReqToCallback:true, usernameField:'email'}, async function (req,username,password,done) {
+
+passport.use("login", 
+new Strategy({passReqToCallback:true, usernameField:'email'}, async function (
+  req,
+  username,
+  password,
+  done
+  
+  ) {
+ 
   try {
-    const login = await authServices.login(username, password)
-    if (login) {
       const user = await UserModel.findOne({ email: username });
-      return done(null,user)
+      
+      if (!user) {
+        return done(null, false, { message: 'User not found', email: username });
+      }
+      const login = await authServices.login(username, password)
+      if (login) {
+        return done(null, user);
     } else {
-      return done(null,false)
+      return done(null,false, { message: 'Invalid password' })
     }
   } catch (error) {
-    throw new Error(error.message)
+    return done(error);
   }
-}))
+}));
 
 export default passport;
